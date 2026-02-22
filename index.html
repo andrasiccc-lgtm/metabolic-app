@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metabolic Health · 8-Wochen-Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #141720;
+    --surface2: #1c2030;
+    --border: #252b3a;
+    --accent: #e8ff47;
+    --accent2: #47c8ff;
+    --accent3: #ff6b47;
+    --text: #e8eaf0;
+    --muted: #6b7385;
+    --green: #4aff9e;
+    --red: #ff4a6b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid noise bg */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(232,255,71,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,255,71,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* HEADER */
+  header {
+    padding: 40px 20px 30px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::after {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(232,255,71,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .logo-area h1 {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .logo-area h1 span {
+    color: var(--accent);
+  }
+
+  .logo-area p {
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    margin-top: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .week-selector {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .week-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .week-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .week-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0d0f14;
+  }
+
+  .week-btn.phase-1 { border-left: 2px solid var(--accent3); }
+  .week-btn.phase-2 { border-left: 2px solid var(--accent2); }
+  .week-btn.phase-3 { border-left: 2px solid var(--green); }
+
+  /* MAIN LAYOUT */
+  .main {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 140px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    padding: 30px 20px;
+    position: sticky;
+    top: 0;
+    height: calc(100vh - 140px);
+    overflow-y: auto;
+  }
+
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .phase-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  .phase-1-badge { background: rgba(255,107,71,0.15); color: var(--accent3); border: 1px solid rgba(255,107,71,0.3); }
+  .phase-2-badge { background: rgba(71,200,255,0.15); color: var(--accent2); border: 1px solid rgba(71,200,255,0.3); }
+  .phase-3-badge { background: rgba(74,255,158,0.15); color: var(--green); border: 1px solid rgba(74,255,158,0.3); }
+
+  .week-title {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+  }
+
+  .week-subtitle {
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 24px;
+  }
+
+  .focus-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .focus-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .focus-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .hr-zone {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+  }
+
+  .hr-zone:last-child { border-bottom: none; }
+
+  .hr-zone-name { color: var(--muted); font-family: 'Space Mono', monospace; font-size: 0.7rem; }
+  .hr-zone-val { font-weight: 700; font-family: 'Space Mono', monospace; }
+
+  /* CONTENT AREA */
+  .content {
+    padding: 30px;
+    overflow-y: auto;
+  }
+
+  /* DAY TABS */
+  .day-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+    overflow-x: auto;
+  }
+
+  .day-tab {
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .day-tab:hover { color: var(--text); }
+  .day-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* DAY VIEW */
+  .day-view { display: none; }
+  .day-view.active { display: block; }
+
+  /* ACTIVITY CARDS */
+  .activities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .activity-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+
+  .activity-card:hover {
+    border-color: var(--border);
+    transform: translateY(-1px);
+  }
+
+  .activity-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    border-radius: 12px 0 0 12px;
+  }
+
+  .card-morgen::before { background: var(--accent); }
+  .card-training::before { background: var(--accent3); }
+  .card-ernaehrung::before { background: var(--accent2); }
+  .card-meditation::before { background: var(--green); }
+  .card-schlaf::before { background: #a78bfa; }
+  .card-bewegung::before { background: #fb923c; }
+
+  .card-icon {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .card-category {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .card-desc {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* 4x4 PROTOCOL CARD */
+  .protocol-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+
+  .protocol-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .protocol-steps {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .protocol-step {
+    text-align: center;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    font-family: 'Space Mono', monospace;
+    min-width: 60px;
+    flex: 1;
+  }
+
+  .step-warmup { background: rgba(107,115,133,0.2); border: 1px solid rgba(107,115,133,0.3); }
+  .step-interval { background: rgba(255,107,71,0.15); border: 1px solid rgba(255,107,71,0.3); color: var(--accent3); }
+  .step-pause { background: rgba(71,200,255,0.1); border: 1px solid rgba(71,200,255,0.2); color: var(--accent2); }
+  .step-cooldown { background: rgba(107,115,133,0.2); border: 1px solid rgba(107,115,133,0.3); }
+
+  .step-name { font-weight: 700; margin-bottom: 4px; }
+  .step-time { font-size: 1rem; font-weight: 700; display: block; margin-bottom: 2px; }
+  .step-intensity { font-size: 0.6rem; color: var(--muted); }
+
+  .arrow {
+    color: var(--border);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  /* TRACKER */
+  .tracker-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+
+  .tracker-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tracker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+
+  .tracker-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+  }
+
+  .tracker-item label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .tracker-item input[type="number"],
+  .tracker-item input[type="text"] {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 4px 0;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .tracker-item input:focus {
+    border-bottom-color: var(--accent);
+  }
+
+  .tracker-item input::placeholder {
+    color: var(--border);
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: all 0.15s;
+  }
+
+  .check-item:hover { border-color: var(--accent); }
+  .check-item.checked {
+    background: rgba(232,255,71,0.06);
+    border-color: rgba(232,255,71,0.3);
+  }
+
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    font-size: 0.7rem;
+  }
+
+  .check-item.checked .check-box {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0d0f14;
+  }
+
+  .check-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar-wrap {
+    background: var(--surface2);
+    border-radius: 4px;
+    height: 6px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+
+  /* WEEK OVERVIEW */
+  .week-overview {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+
+  .overview-day {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .overview-day:hover { border-color: var(--accent2); }
+  .overview-day.selected { border-color: var(--accent); background: rgba(232,255,71,0.05); }
+
+  .overview-day-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .overview-day-dots {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+    flex-wrap: wrap;
+    min-height: 20px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .dot-training { background: var(--accent3); }
+  .dot-meditation { background: var(--green); }
+  .dot-movement { background: var(--accent2); }
+  .dot-hiit { background: var(--accent); }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar {
+      position: static;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .content { padding: 20px; }
+    .activities-grid { grid-template-columns: 1fr; }
+    .protocol-steps { gap: 3px; }
+    .protocol-step { min-width: 44px; padding: 6px 6px; font-size: 0.62rem; }
+  }
+
+  /* SAVE BTN */
+  .save-btn {
+    background: var(--accent);
+    color: #0d0f14;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .save-btn:hover { opacity: 0.85; }
+
+  .saved-badge {
+    display: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    align-items: center;
+    gap: 6px;
+  }
+  .saved-badge.show { display: flex; }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .section-heading {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-area">
+      <h1>Metabolic <span>Health</span></h1>
+      <p>8-Wochen-Trainingsplan · Norweger 4×4 + Kraft + Protokoll</p>
+    </div>
+    <div>
+      <p style="font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--muted);text-align:right;margin-bottom:8px;letter-spacing:0.1em;text-transform:uppercase;">Woche auswählen</p>
+      <div class="week-selector" id="weekSelector"></div>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+  <aside class="sidebar" id="sidebar">
+    <!-- Dynamic sidebar content -->
+  </aside>
+
+  <main class="content">
+    <!-- Week overview -->
+    <div class="week-overview" id="weekOverview"></div>
+
+    <!-- Day tabs -->
+    <div class="day-tabs" id="dayTabs"></div>
+
+    <!-- Day views -->
+    <div id="dayViews"></div>
+  </main>
+</div>
+
+<script>
+const DAYS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+const DAYS_FULL = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+
+const PHASES = {
+  1: { name: 'Phase 1 – Eingewöhnung', weeks: [1,2,3,4], color: 'var(--accent3)', badge: 'phase-1-badge', btnClass: 'phase-1' },
+  2: { name: 'Phase 2 – Aufbau', weeks: [5,6,7,8], color: 'var(--accent2)', badge: 'phase-2-badge', btnClass: 'phase-2' },
+};
+
+const PROTOCOL = {
+  1: { intervals: 2, intensity: '75–80% HFmax', bpm: '124–132 bpm', note: '2 Intervalle statt 4' },
+  2: { intervals: 2, intensity: '80–85% HFmax', bpm: '132–140 bpm', note: '2 Intervalle statt 4' },
+  3: { intervals: 3, intensity: '80–85% HFmax', bpm: '132–140 bpm', note: '3 Intervalle statt 4' },
+  4: { intervals: 3, intensity: '82–87% HFmax', bpm: '135–143 bpm', note: '3 Intervalle' },
+  5: { intervals: 4, intensity: '83–88% HFmax', bpm: '137–145 bpm', note: 'Volles 4×4 Protokoll' },
+  6: { intervals: 4, intensity: '85–90% HFmax', bpm: '140–148 bpm', note: 'Intensität steigern' },
+  7: { intervals: 4, intensity: '87–92% HFmax', bpm: '143–152 bpm', note: 'Hohe Intensität' },
+  8: { intervals: 4, intensity: '88–93% HFmax', bpm: '145–153 bpm', note: 'Peak-Phase' },
+};
+
+// Training per day (same base for all weeks, varies by phase note)
+const SCHEDULE = {
+  Mo: { training: 'Krafttraining (Oberkörper)', has4x4: false, hasKarate: false, hasHandgrip: true },
+  Di: { training: '4×4 Ergometer-Protokoll', has4x4: true, hasKarate: false, hasHandgrip: false },
+  Mi: { training: 'Krafttraining (Unterkörper)', has4x4: false, hasKarate: false, hasHandgrip: true },
+  Do: { training: 'Karate / HIIT oder Zone 2', has4x4: false, hasKarate: true, hasHandgrip: false },
+  Fr: { training: 'Krafttraining (Ganzkörper)', has4x4: false, hasKarate: false, hasHandgrip: true },
+  Sa: { training: '4×4 Ergometer-Protokoll', has4x4: true, hasKarate: false, hasHandgrip: false },
+  So: { training: 'Aktive Erholung / Natur', has4x4: false, hasKarate: false, hasHandgrip: false },
+};
+
+let currentWeek = 1;
+let currentDay = 0;
+let trackingData = JSON.parse(localStorage.getItem('metabolicTracking') || '{}');
+
+function getPhase(week) {
+  return week <= 4 ? 1 : 2;
+}
+
+function getPhaseName(week) {
+  return week <= 4 ? 'Phase 1 – Eingewöhnung' : 'Phase 2 – Aufbau';
+}
+
+function getPhaseBadge(week) {
+  return week <= 4 ? 'phase-1-badge' : 'phase-2-badge';
+}
+
+function getTrackingKey(week, dayIdx, field) {
+  return `w${week}_d${dayIdx}_${field}`;
+}
+
+function saveTracking(key, value) {
+  trackingData[key] = value;
+  localStorage.setItem('metabolicTracking', JSON.stringify(trackingData));
+}
+
+function getTracking(key, def = '') {
+  return trackingData[key] !== undefined ? trackingData[key] : def;
+}
+
+function build4x4Steps(proto) {
+  const n = proto.intervals;
+  let steps = [];
+  steps.push({ type: 'warmup', name: 'Warm-up', time: '10 Min', intensity: '50–60% HFmax' });
+  for (let i = 1; i <= n; i++) {
+    steps.push({ type: 'interval', name: `Int. ${i}`, time: '4 Min', intensity: proto.intensity });
+    if (i < n) {
+      steps.push({ type: 'pause', name: 'Pause', time: '3 Min', intensity: '60–70% HFmax' });
+    }
+  }
+  steps.push({ type: 'cooldown', name: 'Cool-down', time: '5–10 Min', intensity: '50–60% HFmax' });
+  return steps;
+}
+
+function renderSidebar() {
+  const proto = PROTOCOL[currentWeek];
+  const phase = getPhase(currentWeek);
+  const sidebar = document.getElementById('sidebar');
+  
+  const weekOverallKey = `w${currentWeek}_overall_done`;
+  const doneDays = DAYS_FULL.filter((_, i) => getTracking(`w${currentWeek}_d${i}_training_done`) === 'true').length;
+  const pct = Math.round((doneDays / 7) * 100);
+
+  sidebar.innerHTML = `
+    <span class="phase-badge ${getPhaseBadge(currentWeek)}">${getPhaseName(currentWeek)}</span>
+    <div class="week-title">Woche ${currentWeek}</div>
+    <div class="week-subtitle">HFmax-Referenz: 165 bpm (55 J.)</div>
+
+    <div class="focus-block">
+      <div class="focus-label">4×4 Protokoll · Woche ${currentWeek}</div>
+      <div class="focus-value">${proto.intervals} × 4 Min · ${proto.intensity}</div>
+      <div style="color:var(--muted);font-size:0.78rem;margin-top:6px;">${proto.note}</div>
+    </div>
+
+    <div class="focus-block">
+      <div class="focus-label">HF-Zielzonen</div>
+      <div class="hr-zone">
+        <span class="hr-zone-name">Warm-up/Cool-down</span>
+        <span class="hr-zone-val" style="color:var(--muted);">83–99 bpm</span>
+      </div>
+      <div class="hr-zone">
+        <span class="hr-zone-name">Aktive Pause</span>
+        <span class="hr-zone-val" style="color:var(--accent2);">99–116 bpm</span>
+      </div>
+      <div class="hr-zone">
+        <span class="hr-zone-name">Intervall (Ziel)</span>
+        <span class="hr-zone-val" style="color:var(--accent3);">${proto.bpm}</span>
+      </div>
+    </div>
+
+    <div class="focus-block">
+      <div class="focus-label">Wochenfortschritt</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-size:0.8rem;color:var(--muted);">${doneDays}/7 Tage absolviert</span>
+        <span style="font-family:'Space Mono',monospace;font-weight:700;color:var(--accent);font-size:0.9rem;">${pct}%</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" style="width:${pct}%"></div>
+      </div>
+    </div>
+
+    <div class="focus-block">
+      <div class="focus-label">Tägliche Konstanten</div>
+      <div style="font-size:0.82rem;line-height:1.8;color:var(--muted);">
+        ☀️ Sonnenlicht: 10 Min morgens<br>
+        🚶 Airsquats: alle 60 Min · 10×<br>
+        🫁 IMST: 5 Sätze × 6 Züge<br>
+        🚶 Post-Meal Walk: 10 Min<br>
+        🧘 Meditation: 10–15 Min<br>
+        😴 Gleiche Aufwachzeit
+      </div>
+    </div>
+  `;
+}
+
+function renderWeekOverview() {
+  const container = document.getElementById('weekOverview');
+  container.innerHTML = DAYS.map((day, i) => {
+    const sched = SCHEDULE[day];
+    const selected = i === currentDay ? 'selected' : '';
+    const dots = [];
+    if (sched.has4x4) dots.push('<div class="dot dot-hiit"></div>');
+    if (sched.training.includes('Kraft')) dots.push('<div class="dot dot-training"></div>');
+    if (sched.hasKarate) dots.push('<div class="dot dot-movement"></div>');
+    dots.push('<div class="dot dot-meditation"></div>');
+    if (sched.hasHandgrip) dots.push('<div class="dot dot-movement"></div>');
+
+    const done = getTracking(`w${currentWeek}_d${i}_training_done`) === 'true';
+    return `
+      <div class="overview-day ${selected}" onclick="selectDay(${i})">
+        <div class="overview-day-name">${day}</div>
+        <div class="overview-day-dots">${done ? '<div class="dot" style="background:var(--green)"></div>' : dots.join('')}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderDayTabs() {
+  const tabs = document.getElementById('dayTabs');
+  tabs.innerHTML = DAYS_FULL.map((day, i) => `
+    <div class="day-tab ${i === currentDay ? 'active' : ''}" onclick="selectDay(${i})">${day}</div>
+  `).join('');
+}
+
+function renderDayView(dayIdx) {
+  const day = DAYS[dayIdx];
+  const sched = SCHEDULE[day];
+  const proto = PROTOCOL[currentWeek];
+
+  const trainingDoneKey = getTrackingKey(currentWeek, dayIdx, 'training_done');
+  const meditationDoneKey = getTrackingKey(currentWeek, dayIdx, 'meditation_done');
+  const walkDoneKey = getTrackingKey(currentWeek, dayIdx, 'walk_done');
+  const imstDoneKey = getTrackingKey(currentWeek, dayIdx, 'imst_done');
+  const stepsKey = getTrackingKey(currentWeek, dayIdx, 'steps');
+  const waterKey = getTrackingKey(currentWeek, dayIdx, 'water');
+  const sleepKey = getTrackingKey(currentWeek, dayIdx, 'sleep');
+  const energyKey = getTrackingKey(currentWeek, dayIdx, 'energy');
+  const wellbeinKey = getTrackingKey(currentWeek, dayIdx, 'wellbeing');
+  const hrKey = getTrackingKey(currentWeek, dayIdx, 'hr_peak');
+  const rpeKey = getTrackingKey(currentWeek, dayIdx, 'rpe');
+  const notesKey = getTrackingKey(currentWeek, dayIdx, 'notes');
+
+  const t_done = getTracking(trainingDoneKey) === 'true';
+  const m_done = getTracking(meditationDoneKey) === 'true';
+  const w_done = getTracking(walkDoneKey) === 'true';
+  const i_done = getTracking(imstDoneKey) === 'true';
+
+  // Build 4x4 protocol HTML
+  let protocolHTML = '';
+  if (sched.has4x4) {
+    const steps = build4x4Steps(proto);
+    const stepsHTML = steps.map((s, idx) => {
+      const typeClass = `step-${s.type}`;
+      return `
+        ${idx > 0 ? '<span class="arrow">›</span>' : ''}
+        <div class="protocol-step ${typeClass}">
+          <div class="step-name">${s.name}</div>
+          <span class="step-time">${s.time}</span>
+          <div class="step-intensity">${s.intensity}</div>
+        </div>
+      `;
+    }).join('');
+
+    protocolHTML = `
+      <div class="protocol-card">
+        <div class="protocol-title">⚡ Norwegisches 4×4 Protokoll · Woche ${currentWeek}
+          <span style="font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--muted);font-weight:400;">${proto.note}</span>
+        </div>
+        <div class="protocol-steps">${stepsHTML}</div>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <label style="font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">HF-Spitzenwert (bpm)</label>
+            <input type="number" placeholder="—" value="${getTracking(hrKey)}" 
+              oninput="saveTracking('${hrKey}', this.value)"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:1.1rem;font-weight:700;width:100%;outline:none;padding:4px 0;">
+          </div>
+          <div>
+            <label style="font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">RPE (6–20)</label>
+            <input type="number" placeholder="—" min="6" max="20" value="${getTracking(rpeKey)}"
+              oninput="saveTracking('${rpeKey}', this.value)"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:1.1rem;font-weight:700;width:100%;outline:none;padding:4px 0;">
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  const trainingIcon = sched.has4x4 ? '⚡' : sched.hasKarate ? '🥋' : sched.training.includes('Erholung') ? '🌿' : '🏋️';
+
+  return `
+    <div class="day-view active" id="day-${dayIdx}">
+
+      <!-- Activities -->
+      <div class="section-header">
+        <span class="section-heading">Heutiger Plan</span>
+      </div>
+      <div class="activities-grid">
+        <div class="activity-card card-morgen">
+          <span class="card-icon">☀️</span>
+          <div class="card-category">Morgenroutine</div>
+          <div class="card-title">Licht & Start</div>
+          <div class="card-desc">10 Min Sonnenlicht · Gleiche Aufwachzeit · Kein künstliches Licht morgens</div>
+        </div>
+
+        <div class="activity-card card-training">
+          <span class="card-icon">${trainingIcon}</span>
+          <div class="card-category">Haupttraining</div>
+          <div class="card-title">${sched.training}</div>
+          <div class="card-desc">${sched.has4x4 ? `${proto.intervals} × 4 Min · ${proto.intensity} · ca. 40–50 Min gesamt` : sched.hasKarate ? 'Karate oder alternativ 45–60 Min Zone 2 (60–70% HFmax)' : sched.training.includes('Erholung') ? 'Leichte Bewegung, Spaziergang, Natur & Stille' : 'Kraftsatz-Protokoll · Progressive Überlastung'}</div>
+        </div>
+
+        <div class="activity-card card-ernaehrung">
+          <span class="card-icon">🫁</span>
+          <div class="card-category">IMST · Atemmuskeltraining</div>
+          <div class="card-title">5 Sätze × 6 Züge</div>
+          <div class="card-desc">30 Züge total · 5–7 Min · Vor dem Ergometer-Training durchführen, nicht danach</div>
+        </div>
+
+        ${sched.hasHandgrip ? `
+        <div class="activity-card card-bewegung">
+          <span class="card-icon">🤝</span>
+          <div class="card-category">Isometrisches Training</div>
+          <div class="card-title">Handgrip-Protokoll</div>
+          <div class="card-desc">4 Sätze × 2 Min · Blutdruckadaptation · Vor dem HIIT / Haupttraining</div>
+        </div>` : ''}
+
+        <div class="activity-card card-bewegung">
+          <span class="card-icon">🚶</span>
+          <div class="card-category">Stündliche Bewegung</div>
+          <div class="card-title">Airsquats alle 60 Min</div>
+          <div class="card-desc">10× pro Stunde · Sitzunterbrechung · Post-Meal Walk: 10 Min nach Mittagessen</div>
+        </div>
+
+        <div class="activity-card card-meditation">
+          <span class="card-icon">🧘</span>
+          <div class="card-category">Geist & Stille</div>
+          <div class="card-title">${dayIdx >= 5 ? 'Natur & Stille' : 'Meditation'}</div>
+          <div class="card-desc">${dayIdx >= 5 ? 'Natur, Stille und Erholung · Kein Gerätestress' : '10–15 Min · Mooji / Mingyur Rinpoche Methode · Nach dem Aufwachen oder abends'}</div>
+        </div>
+
+        <div class="activity-card card-schlaf">
+          <span class="card-icon">😴</span>
+          <div class="card-category">Schlaf</div>
+          <div class="card-title">Konsistenz & Dunkel</div>
+          <div class="card-desc">${dayIdx >= 5 ? 'Gleiche Aufwachzeit · Erholung priorisieren' : 'Gleiche Aufwachzeit · Dunkel schlafen · Kühle Raumtemperatur'}</div>
+        </div>
+      </div>
+
+      <!-- 4x4 Protocol Visualization -->
+      ${protocolHTML}
+
+      <!-- Checkliste -->
+      <div class="tracker-section">
+        <div class="tracker-title">✅ Tages-Check</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;">
+          <div class="check-item ${t_done ? 'checked' : ''}" onclick="toggleCheck('${trainingDoneKey}', this)">
+            <div class="check-box">${t_done ? '✓' : ''}</div>
+            <span class="check-label">Training absolviert</span>
+          </div>
+          <div class="check-item ${m_done ? 'checked' : ''}" onclick="toggleCheck('${meditationDoneKey}', this)">
+            <div class="check-box">${m_done ? '✓' : ''}</div>
+            <span class="check-label">Meditation</span>
+          </div>
+          <div class="check-item ${w_done ? 'checked' : ''}" onclick="toggleCheck('${walkDoneKey}', this)">
+            <div class="check-box">${w_done ? '✓' : ''}</div>
+            <span class="check-label">Post-Meal Walk</span>
+          </div>
+          <div class="check-item ${i_done ? 'checked' : ''}" onclick="toggleCheck('${imstDoneKey}', this)">
+            <div class="check-box">${i_done ? '✓' : ''}</div>
+            <span class="check-label">IMST erledigt</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metriken-Tracker -->
+      <div class="tracker-section">
+        <div class="tracker-title">📊 Tages-Tracking</div>
+        <div class="tracker-grid">
+          <div class="tracker-item">
+            <label>👣 Schritte</label>
+            <input type="number" placeholder="0" value="${getTracking(stepsKey)}" oninput="saveTracking('${stepsKey}', this.value)">
+          </div>
+          <div class="tracker-item">
+            <label>💧 Wasser (L)</label>
+            <input type="number" placeholder="0.0" step="0.1" value="${getTracking(waterKey)}" oninput="saveTracking('${waterKey}', this.value)">
+          </div>
+          <div class="tracker-item">
+            <label>😴 Schlaf (h)</label>
+            <input type="number" placeholder="0.0" step="0.5" value="${getTracking(sleepKey)}" oninput="saveTracking('${sleepKey}', this.value)">
+          </div>
+          <div class="tracker-item">
+            <label>⚡ Energie (1–10)</label>
+            <input type="number" placeholder="—" min="1" max="10" value="${getTracking(energyKey)}" oninput="saveTracking('${energyKey}', this.value)">
+          </div>
+          <div class="tracker-item">
+            <label>😊 Wohlbefinden (1–10)</label>
+            <input type="number" placeholder="—" min="1" max="10" value="${getTracking(wellbeinKey)}" oninput="saveTracking('${wellbeinKey}', this.value)">
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <div class="tracker-item">
+            <label>📝 Notizen</label>
+            <input type="text" placeholder="Wie war die Session?" value="${getTracking(notesKey)}" oninput="saveTracking('${notesKey}', this.value)" style="font-size:0.85rem;font-weight:400;font-family:'Syne',sans-serif;">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  `;
+}
+
+function selectDay(dayIdx) {
+  currentDay = dayIdx;
+  renderWeekOverview();
+  renderDayTabs();
+  renderDayViews();
+}
+
+function selectWeek(week) {
+  currentWeek = week;
+  // Update week buttons
+  document.querySelectorAll('.week-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i + 1 === week);
+  });
+  renderSidebar();
+  renderWeekOverview();
+  renderDayTabs();
+  renderDayViews();
+}
+
+function renderDayViews() {
+  const container = document.getElementById('dayViews');
+  container.innerHTML = renderDayView(currentDay);
+}
+
+function toggleCheck(key, el) {
+  const current = getTracking(key) === 'true';
+  const newVal = (!current).toString();
+  saveTracking(key, newVal);
+  el.classList.toggle('checked', !current);
+  el.querySelector('.check-box').textContent = !current ? '✓' : '';
+  // Re-render sidebar for progress
+  renderSidebar();
+  renderWeekOverview();
+}
+
+function initWeekSelector() {
+  const container = document.getElementById('weekSelector');
+  for (let w = 1; w <= 8; w++) {
+    const btn = document.createElement('button');
+    btn.className = `week-btn ${w <= 4 ? 'phase-1' : 'phase-2'} ${w === currentWeek ? 'active' : ''}`;
+    btn.textContent = w;
+    btn.title = `Woche ${w} · ${w <= 4 ? 'Phase 1' : 'Phase 2'}`;
+    btn.onclick = () => selectWeek(w);
+    container.appendChild(btn);
+  }
+}
+
+// INIT
+initWeekSelector();
+renderSidebar();
+renderWeekOverview();
+renderDayTabs();
+renderDayViews();
+</script>
+
+</body>
+</html>
